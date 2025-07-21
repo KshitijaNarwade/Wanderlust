@@ -53,7 +53,9 @@
       </form>
       <br />
 
-      <p>All Reviews</p>
+      <p>
+      <h4>All Reviews</h4>
+      </p>
       <div class="row">
         <% for (let review of listing.reviews) { %>
           <div class="card col-5 mb-3 ms-3" style="width: 18rem">
@@ -63,10 +65,18 @@
                 <%= review.comment%>
               </p>
               <p class="card-text">
-                <%= review.rating %>
+                <% for (let i=1; i <=5; i++) { %>
+                  <% if (i <=review.rating) { %>
+                    <i class="fas fa-star" style="color: gold;"></i> 
+                    <% } else { %>
+                      <i class="far fa-star" style="color: gray;"></i>
+                      <% } %>
+                        <% } %>
               </p>
-              <%= review._id %>
-              <form action="/listings/<%=listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="post" class="mb-3">
+
+
+              <form action="/listings/<%=listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="post"
+                class="mb-3">
                 <button class="btn btn-sm btn-dark">Delete</button>
               </form>
             </div>
