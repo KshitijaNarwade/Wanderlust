@@ -5,6 +5,9 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require('ejs-mate');
 
+const session = require("express-session");
+const flash = require("connect-flash");
+
 const ExpressError = require("./utils/ExpressError.js");
 
 const listings = require("./routes/listings.js");
@@ -30,8 +33,25 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
-app.get("/", (req, res) => {
-    res.send("This is root route");
+const sessionOptions = {
+    secret: "mysupersecretcode",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 3,
+        maxAge: 3 * 24 * 60 * 60 * 24 * 3,
+        httpOnly: true
+    }
+}
+
+app.use(session(sessionOptions));
+app.use(flash()); // we have to define this middleware befor we are passing the routes to app.use [ e.g: app.use("/listings",listings)]
+
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
 });
 
 app.use("/listings", listings);
